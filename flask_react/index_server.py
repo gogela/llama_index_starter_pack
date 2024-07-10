@@ -32,7 +32,7 @@ def initialize_index():
                          )
     Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
     
-    documents = SimpleDirectoryReader("/documents").load_data()
+    documents = SimpleDirectoryReader("./documents").load_data()
     # index = VectorStoreIndex.from_documents(documents)
 
     with lock:
