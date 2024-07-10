@@ -1,9 +1,9 @@
-Flask==2.2.3
-Flask-Cors==3.0.10
-langchain==0.0.154
-pypdf
 llama-index-llms-nvidia 
 llama-index-embeddings-nvidia 
 llama-index-readers-file 
 llama-index-embeddings-openai
 llama-index-embeddings-huggingface
+pypdf
+Flask==2.2.3
+Flask-Cors==3.0.10
+langchain==0.0.154
