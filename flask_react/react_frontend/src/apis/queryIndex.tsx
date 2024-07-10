@@ -12,7 +12,7 @@ export type QueryResponse = {
 };
 
 const queryIndex = async (query: string): Promise<QueryResponse> => {
-  //const queryURL = new URL('http://localhost:5601/query?');
+  // const queryURL = new URL('http://localhost:5601/query?');
   const queryURL = new URL('/query?');
   queryURL.searchParams.append('text', query);
 
