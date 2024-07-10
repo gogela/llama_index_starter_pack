@@ -24,7 +24,7 @@ pkl_name = "stored_documents.pkl"
 def initialize_index():
     """Create a new global index, or load one from the pre-set path."""
     global index, stored_docs
-    
+    print('index init')
 
 
     Settings.llm = NVIDIA(
@@ -32,7 +32,7 @@ def initialize_index():
                          )
     Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
     
-    documents = SimpleDirectoryReader("./misc_doc").load_data()
+    documents = SimpleDirectoryReader("./documents").load_data()
     # index = VectorStoreIndex.from_documents(documents)
 
     with lock:
@@ -49,12 +49,14 @@ def initialize_index():
 def query_index(query_text):
     """Query the global index."""
     global index
+    print('query:',query_text)
     response = index.as_query_engine().query(query_text)
     return response
 
 
 def insert_into_index(doc_file_path, doc_id=None):
     """Insert new document into global index."""
+    print('insert doc:',doc_file_path)
     global index, stored_docs
     document = SimpleDirectoryReader(input_files=[doc_file_path]).load_data()[0]
     if doc_id is not None:
@@ -74,6 +76,7 @@ def insert_into_index(doc_file_path, doc_id=None):
 
 def get_documents_list():
     """Get the list of currently stored documents."""
+    print('list docs')
     global stored_doc
     documents_list = []
     for doc_id, doc_text in stored_docs.items():
