@@ -19,6 +19,7 @@ manager.connect()
 @app.route("/query", methods=["GET"])
 def query_index():
     global manager
+    print('QUERY...')
     query_text = request.args.get("text", None)
     if query_text is None:
         return "No text found, please include a ?text=blah parameter in the URL", 400
@@ -38,6 +39,7 @@ def query_index():
 
 @app.route("/uploadFile", methods=["POST"])
 def upload_file():
+    
     global manager
     if 'file' not in request.files:
         return "Please send a POST request with a file", 400
@@ -47,6 +49,7 @@ def upload_file():
         uploaded_file = request.files["file"]
         filename = secure_filename(uploaded_file.filename)
         filepath = os.path.join('documents', os.path.basename(filename))
+        print('Upload file to:', filepath)
         uploaded_file.save(filepath)
 
         if request.form.get("filename_as_doc_id", None) is not None:
