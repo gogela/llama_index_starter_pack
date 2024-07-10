@@ -1,12 +1,16 @@
 import os
 import pickle
 
-# NOTE: for local testing only, do NOT deploy with your key hardcoded
-os.environ['OPENAI_API_KEY'] = "your key here"
+from multiprocessing import Lock
+from multiprocessing.managers import BaseManager
+
 
 from multiprocessing import Lock
 from multiprocessing.managers import BaseManager
-from llama_index import SimpleDirectoryReader, GPTVectorStoreIndex, Document, ServiceContext, StorageContext, load_index_from_storage
+from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, Document, StorageContext, load_index_from_storage, Settings
+
+from llama_index.llms.nvidia import NVIDIA
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
 index = None
 stored_docs = {}
@@ -16,16 +20,26 @@ index_name = "./saved_index"
 pkl_name = "stored_documents.pkl"
 
 
+
 def initialize_index():
     """Create a new global index, or load one from the pre-set path."""
     global index, stored_docs
     
-    service_context = ServiceContext.from_defaults(chunk_size_limit=512)
+
+
+    Settings.llm = NVIDIA(
+                        base_url="http://nim-service:8000/v1", model="meta-llama3-8b-instruct"
+                         )
+    Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
+    
+    documents = SimpleDirectoryReader("./misc_doc").load_data()
+    # index = VectorStoreIndex.from_documents(documents)
+
     with lock:
         if os.path.exists(index_name):
-            index = load_index_from_storage(StorageContext.from_defaults(persist_dir=index_name), service_context=service_context)
+            index = load_index_from_storage(StorageContext.from_defaults(persist_dir=index_name))
         else:
-            index = GPTVectorStoreIndex([], service_context=service_context)
+            index = VectorStoreIndex.from_documents(documents) #just some basic documents
             index.storage_context.persist(persist_dir=index_name)
         if os.path.exists(pkl_name):
             with open(pkl_name, "rb") as f:
